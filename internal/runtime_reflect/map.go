@@ -73,12 +73,24 @@ type hiter struct {
 	checkBucket uintptr
 }
 
+// ***** ***** king add 20260331 ****** *****
+
+// 传入map的地址 不能为*map
+func GetSize(m unsafe.Pointer) int { return reflect_maplen(m) }
+
+//go:noescape
+//go:linkname reflect_maplen reflect.maplen
+func reflect_maplen(m unsafe.Pointer) int
+
+// ***** ***** king add 20260331 ****** *****
+
 //go:noescape
 //go:linkname makemap reflect.makemap
 func makemap(t unsafe.Pointer, cap int) unsafe.Pointer
 
 // m escapes into the return value, but the caller of mapiterinit
 // doesn't let the return value escape.
+//
 //go:noescape
 //go:linkname mapiterinit runtime.mapiterinit
 func mapiterinit(t unsafe.Pointer, m unsafe.Pointer, it *hiter)
