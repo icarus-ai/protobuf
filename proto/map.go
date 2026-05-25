@@ -27,8 +27,6 @@ func (w *walker) mapCodec(t reflect.Type, f *mapField) *codec {
 	return m
 }
 
-// ??? map len
-
 func mapSizeFuncOf(t reflect.Type, f *mapField) sizeFunc {
 	mapTagSize := sizeOfVarint(f.wiretag)
 	keyCodec := f.keyField.codec
@@ -38,12 +36,14 @@ func mapSizeFuncOf(t reflect.Type, f *mapField) sizeFunc {
 		if p == nil {
 			return 0
 		}
+		// *map => map, map == nil
 		if p = *(*unsafe.Pointer)(p); p == nil {
 			return 0
-		} // king add 20260331 // *map => map // map == nil
-		if GetSize(p) == 0 {
+		}
+		// map.len == 0
+		if MapSize(p) == 0 {
 			return 0
-		} // king add 20260331 //  map.len == 0,
+		}
 
 		n, m := 0, MapIter{}
 		defer m.Done()
@@ -70,19 +70,20 @@ func mapEncodeFuncOf(t reflect.Type, f *mapField) encodeFunc {
 		if p == nil {
 			return b
 		}
+		// *map => map, map == nil
 		if p = *(*unsafe.Pointer)(p); p == nil {
 			return b
-		} // king add 20260331 // *map => map // map == nil
-		if GetSize(p) == 0 {
+		}
+		// map.len == 0 不写入buf
+		if MapSize(p) == 0 {
 			return b
-		} // king add 20260331 //  map.len == 0 不写入buf
+		}
 
 		origLen, m := len(b), MapIter{}
 		defer m.Done()
 
 		for m.Init(pointer(t), p); m.HasNext(); m.Next() {
-			key := m.Key()
-			val := m.Value()
+			key, val := m.Key(), m.Value()
 
 			keySize := keyCodec.size(key, f.keyField)
 			valSize := valCodec.size(val, f.valField)
