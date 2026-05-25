@@ -85,7 +85,7 @@ func mapEncodeFuncOf(t reflect.Type, f *mapField) encodeFunc {
 			val := m.Value()
 
 			keySize := keyCodec.size(key, f.keyField)
-			valSize := keyCodec.size(val, f.valField)
+			valSize := valCodec.size(val, f.valField)
 			elemSize := keySize + valSize
 
 			b = append(b, mapTag...)
