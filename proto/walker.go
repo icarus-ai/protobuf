@@ -170,12 +170,16 @@ func (w *walker) structInfo(t reflect.Type) *structInfo {
 				field.codec = &float32OptionCodec
 			case optionUInt32Type:
 				field.codec = &fixed32OptionCodec
+			case optionInt32Type:
+				field.codec = &fixed32OptionCodec // king add
 			}
 			switch baseKindOf(f.Type) {
 			case reflect.Uint32:
 				field.codec = &fixed32Codec
 			case reflect.Float32:
 				field.codec = &float32Codec
+			case reflect.Int32:
+				field.codec = &float32Codec // king add
 			}
 		case fixed64:
 			switch f.Type {
@@ -183,12 +187,16 @@ func (w *walker) structInfo(t reflect.Type) *structInfo {
 				field.codec = &fixed64OptionCodec
 			case optionFloat64Type:
 				field.codec = &float64OptionCodec
+			case optionInt64Type:
+				field.codec = &fixed64OptionCodec
 			}
 			switch baseKindOf(f.Type) {
 			case reflect.Uint64:
 				field.codec = &fixed64Codec
 			case reflect.Float64:
 				field.codec = &float64Codec
+			case reflect.Int64:
+				field.codec = &fixed64Codec
 			}
 		}
 		if field.codec == nil {
