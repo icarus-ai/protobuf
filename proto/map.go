@@ -36,10 +36,10 @@ func mapSizeFuncOf(t reflect.Type, f *mapField) sizeFunc {
 		if p == nil {
 			return 0
 		}
-		if p = *(*unsafe.Pointer)(p); p == nil {
+		if reflect.NewAt(t, p).Elem().Len() == 0 {
 			return 0
 		}
-		if MapSize(p) == 0 {
+		if p = *(*unsafe.Pointer)(p); p == nil {
 			return 0
 		}
 
@@ -64,10 +64,10 @@ func mapEncodeFuncOf(t reflect.Type, f *mapField) encodeFunc {
 		if p == nil {
 			return b
 		}
-		if p = *(*unsafe.Pointer)(p); p == nil {
+		if reflect.NewAt(t, p).Elem().Len() == 0 {
 			return b
 		}
-		if MapSize(p) == 0 {
+		if p = *(*unsafe.Pointer)(p); p == nil {
 			return b
 		}
 

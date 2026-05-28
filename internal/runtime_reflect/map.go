@@ -73,13 +73,6 @@ type hiter struct {
 	checkBucket uintptr
 }
 
-// MapSize 传入地址为 不能为&map
-func MapSize(m unsafe.Pointer) int { return reflect_maplen(m) }
-
-//go:noescape
-//go:linkname reflect_maplen reflect.maplen
-func reflect_maplen(m unsafe.Pointer) int
-
 //go:noescape
 //go:linkname makemap reflect.makemap
 func makemap(t unsafe.Pointer, cap int) unsafe.Pointer
